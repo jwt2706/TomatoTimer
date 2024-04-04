@@ -20,6 +20,7 @@ TomatoTimer.prototype = {
     );
 
     this.set_applet_label("No time set");
+    //this.set_applet_icon_path('icon.png'); TODO: add icon
 
     this.menu = new Applet.AppletPopupMenu(this, orientation);
     this.menuManager = new PopupMenu.PopupMenuManager(this);
@@ -115,9 +116,11 @@ TomatoTimer.prototype = {
       this.remainingTime--;
       this._updateLabel();
       if (this.remainingTime <= 0) {
-        global.log("Timer finished!");
+        global.log("TomatoTimer finished!");
         this.set_applet_label("No time set");
-        GLib.spawn_command_line_async('notify-send "Timer" "Timer finished!"');
+        GLib.spawn_command_line_async(
+          'notify-send "TomatoTimer" "Timer finished!"'
+        );
         return GLib.SOURCE_REMOVE;
       }
       return GLib.SOURCE_CONTINUE;
