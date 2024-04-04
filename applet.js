@@ -2,6 +2,7 @@ const Applet = imports.ui.applet;
 const PopupMenu = imports.ui.popupMenu;
 const St = imports.gi.St;
 const GLib = imports.gi.GLib;
+const Clutter = imports.gi.Clutter;
 
 function TomatoTimer(orientation, panelHeight, instanceId) {
   this._init(orientation, panelHeight, instanceId);
@@ -63,6 +64,13 @@ TomatoTimer.prototype = {
     const entry = new St.Entry({ text: "00" });
     entry.set_style("font-size: 40px");
     entry.clutter_text.set_editable(true);
+    entry.clutter_text.connect("key-press-event", (o, event) => {
+      const key = event.get_key_unicode();
+      if (isNaN(key) || o.get_text().length >= 2) {
+        return Clutter.EVENT_STOP;
+      }
+      return Clutter.EVENT_PROPAGATE;
+    });
     return entry;
   },
 
@@ -109,6 +117,7 @@ TomatoTimer.prototype = {
       if (this.remainingTime <= 0) {
         global.log("Timer finished!");
         this.set_applet_label("No time set");
+        GLib.spawn_command_line_async('notify-send "Timer" "Timer finished!"');
         return GLib.SOURCE_REMOVE;
       }
       return GLib.SOURCE_CONTINUE;
